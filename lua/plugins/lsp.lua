@@ -3,17 +3,18 @@ local lsp_attach = function(args)
   local opts = { buffer = args.buf, remap = false }
   -- local client = vim.lsp.get_client_by_id(args.data.client_id)
 
-  map("n", "<leader>gd", function() vim.lsp.buf.definition() end, opts)
-  map("n", "<leader>gr", function() require('telescope.builtin').lsp_references() end, opts)
-  map("n", "<leader>fs", function() require("telescope.builtin").lsp_dynamic_workspace_symbols() end, opts)
-  map("n", "K", function() vim.lsp.buf.hover() end, opts)
-  map("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts)
-  map("n", "[g", function() vim.diagnostic.jump({ count = 1, float = true }) end, opts)
-  map("n", "]g", function() vim.diagnostic.jump({ count = -1, float = true }) end, opts)
-  map("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts)
-  map("n", "<leader>rn", function() vim.lsp.buf.rename() end, opts)
-  map("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts) -- go to implementation
-  map("n", "<leader>aa", vim.diagnostic.setqflist)
+  ---@format disable
+  map("n", "<leader>gd",   vim.lsp.buf.definition,                                              opts)
+  map("n", "<leader>gr",   require('telescope.builtin').lsp_references,                         opts)
+  map("n", "<leader>fs",   require("telescope.builtin").lsp_dynamic_workspace_symbols,          opts)
+  map("n", "K",            vim.lsp.buf.hover,                                                   opts)
+  map("n", "<leader>vd",   vim.diagnostic.open_float,                                           opts)
+  map("n", "<leader>vca",  vim.lsp.buf.code_action,                                             opts)
+  map("n", "<leader>rn",   vim.lsp.buf.rename,                                                  opts)
+  map("n", "<leaderl>gi",  vim.lsp.buf.implementation,                                          opts)
+  map("n", "[g",           function() vim.diagnostic.jump({ count = 1, float = true }) end,     opts)
+  map("n", "]g",           function() vim.diagnostic.jump({ count = -1, float = true }) end,    opts)
+  ---@format enable
 end
 
 
