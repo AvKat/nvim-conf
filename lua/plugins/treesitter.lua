@@ -1,50 +1,105 @@
+local selection_object = function(keys, query_string, query_group, description)
+  return {
+    keys,
+    function()
+      require("nvim-treesitter-textobjects.select").select_textobject(query_string, query_group)
+    end,
+    desc = description,
+    mode = { "x", "o" },
+  }
+end
+
 return {
-  'nvim-treesitter/nvim-treesitter',
-  cmd = { 'TSUpdate' },
-  config = function() 
-    require 'nvim-treesitter.configs'.setup {
-      -- A list of parser names, or "all" (the four listed parsers should always be installed)
-      ensure_installed = { "c", "lua", "vim", "javascript", "typescript", "racket" },
-      ignore_install = { "latex", },
+  {
+    "nvim-treesitter/nvim-treesitter",
+    lazy = false,
+    event = "BufRead",
+    branch = "main",
+    build = ":TSUpdate",
+    ---@class TSConfig
+    opts = {
+      -- custom handling of parsers
+      ensure_installed = { "c", "cpp", "lua", "vim", "javascript", "typescript", "racket" },
+    },
+    config = function(_, opts)
+      -- install parsers from custom opts.ensure_installed
+      if opts.ensure_installed and #opts.ensure_installed > 0 then
+        require("nvim-treesitter").install(opts.ensure_installed)
+        -- register and start parsers for filetypes
+        for _, parser in ipairs(opts.ensure_installed) do
+          local filetypes = parser -- In this case, parser is the filetype/language name
+          vim.treesitter.language.register(parser, filetypes)
 
-      -- Install parsers synchronously (only applied to `ensure_installed`)
-      sync_install = false,
+          vim.api.nvim_create_autocmd({ "FileType" }, {
+            pattern = filetypes,
+            callback = function(event)
+              vim.treesitter.start(event.buf, parser)
+            end,
+          })
+        end
+      end
 
-      highlight = {
-        enable = true,
-        disable = { "tex" },
-        additional_vim_regex_highlighting = false,
-      },
-      textobjects = {
-        select = {
-          enable = true,
-          -- Automatically jump forward to textobj, similar to targets.vim
-          lookahead = true,
-          keymaps = {
-            ["af"] = "@function.outer",
-            ["if"] = "@function.inner",
-            ["ac"] = "@class.outer",
-            ["ic"] = "@class.inner",
-            ["ao"] = "@parameter.outer",
-            ["io"] = "@parameter.inner",
-            ["as"] = "@scope.outer",
-            ["is"] = "@scope.inner",
-          },
-          include_surrounding_whitespace = true,
-        },
-        move = {
-          enable = true,
-          set_jumps = true,
-          goto_next_start = {
-            ["]]"] = "@function.outer",
-            ["]m"] = "@class.outer",
-          },
-          goto_previous_start = {
-            ["[["] = "@function.outer",
-            ["[m"] = "@class.outer",
-          },
-        }
-      }
-    }
-  end
+      -- Auto-install and start parsers for any buffer
+      vim.api.nvim_create_autocmd({ "BufRead" }, {
+        callback = function(event)
+          local bufnr = event.buf
+          local filetype = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
+
+          -- Skip if no filetype
+          if filetype == "" then
+            return
+          end
+
+          -- Check if this filetype is already handled by explicit opts.ensure_installed config
+          for _, filetypes in pairs(opts.ensure_installed) do
+            local ft_table = type(filetypes) == "table" and filetypes or { filetypes }
+            if vim.tbl_contains(ft_table, filetype) then
+              return -- Already handled above
+            end
+          end
+
+          -- Get parser name based on filetype
+          local parser_name = vim.treesitter.language.get_lang(filetype) -- might return filetype (not helpful)
+          if not parser_name then
+            return
+          end
+          -- Try to get existing parser (helpful check if filetype was returned above)
+          local parser_configs = require("nvim-treesitter.parsers")
+          if not parser_configs[parser_name] then
+            return -- Parser not available, skip silently
+          end
+
+          local parser_installed = pcall(vim.treesitter.get_parser, bufnr, parser_name)
+
+          if not parser_installed then
+            -- If not installed, install parser synchronously
+            require("nvim-treesitter").install({ parser_name }):wait(30000)
+          end
+
+          -- let's check again
+          parser_installed = pcall(vim.treesitter.get_parser, bufnr, parser_name)
+
+          if parser_installed then
+            -- Start treesitter for this buffer
+            vim.treesitter.start(bufnr, parser_name)
+          end
+        end,
+      })
+    end,
+  },
+  {
+    "nvim-treesitter/nvim-treesitter-textobjects",
+    branch = "main",
+    keys = {
+      selection_object("af", "@function.outer", "textobjects", "Select outer function"),
+      selection_object("if", "@function.inner", "textobjects", "Select inner function"),
+      selection_object("ac", "@class.outer", "textobjects", "Select outer class"),
+      selection_object("ic", "@class.inner", "textobjects", "Select inner class"),
+      selection_object("ao", "@parameter.outer", "textobjects", "Select outer parameter"),
+      selection_object("io", "@parameter.inner", "textobjects", "Select inner parameter"),
+      selection_object("as", "@local.scope", "locals", "Select local scope"),
+    },
+    ---@module "nvim-treesitter-textobjects"
+    opts = { multiwindow = true },
+  },
 }
