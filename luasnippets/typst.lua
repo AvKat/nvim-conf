@@ -56,6 +56,27 @@ return {
     delimiters = "<>"
   })),
 
+  s("/algorithm", fmt([[
+#import "@preview/algorithmic:1.0.7"
+#import algorithmic: style-algorithm, algorithm-figure
+#show: style-algorithm
+
+#algorithm-figure("<>", vstroke: .5pt + luma(200), {
+  import algorithmic: *
+
+  Procedure(`<>`, <>, {
+    <>
+  })
+})
+  ]], {
+    i(1, "Algorithm Title"),
+    i(2, "Procedure Name"),
+    i(3, "Parameters"),
+    i(4, "Comment[Code]")
+  }, {
+    delimiters = "<>"
+  })),
+
   --   s("typcmd", fmt([[
   -- #let seq = $subset.eq$
   -- #let supeq = $supset.eq$
