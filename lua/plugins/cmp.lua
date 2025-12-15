@@ -2,6 +2,7 @@ return {
   'hrsh7th/nvim-cmp',
   dependencies = {
     'hrsh7th/cmp-nvim-lsp',
+    'hrsh7th/cmp-nvim-lua',
     'hrsh7th/cmp-buffer',
     'hrsh7th/cmp-path',
     'saadparwaiz1/cmp_luasnip',
@@ -65,6 +66,7 @@ return {
       -- sources for autocompletion
       sources = cmp.config.sources({
         { name = "nvim_lsp" }, -- lsp
+        { name = "nvim_lua" }, -- neovim lua api
         { name = "luasnip" },  -- snippets
         { name = "buffer" },   -- text within current buffer
         { name = "path" },     -- file system paths
