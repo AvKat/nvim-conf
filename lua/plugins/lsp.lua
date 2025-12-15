@@ -1,7 +1,6 @@
 local lsp_attach = function(args)
   local map = vim.keymap.set
   local opts = { buffer = args.buf, remap = false }
-  -- local client = vim.lsp.get_client_by_id(args.data.client_id)
 
   ---@format disable
   map("n", "<leader>gd",   vim.lsp.buf.definition,                                              opts)
@@ -15,6 +14,15 @@ local lsp_attach = function(args)
   map("n", "[g",           function() vim.diagnostic.jump({ count = 1, float = true }) end,     opts)
   map("n", "]g",           function() vim.diagnostic.jump({ count = -1, float = true }) end,    opts)
   ---@format enable
+
+
+  map("n", "<leader>li", function()
+    vim.lsp.inlay_hint.enable(
+      not vim.lsp.inlay_hint.is_enabled({ bufnr = args.buf }),
+      { bufnr = args.buf }
+    )
+  end)
+  vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
 end
 
 
@@ -24,6 +32,7 @@ return {
     'hrsh7th/nvim-cmp',
     dependencies = {
       'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-nvim-lua',
       'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-path',
     },
