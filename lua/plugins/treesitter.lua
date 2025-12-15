@@ -19,7 +19,8 @@ return {
     ---@class TSConfig
     opts = {
       -- custom handling of parsers
-      ensure_installed = { "c", "cpp", "lua", "vim", "javascript", "typescript", "racket" },
+      ensure_installed = { "c", "cpp", "lua", "vim", "javascript", "typescript", "racket", "vimdoc" },
+      ignore_install = { "typst" },
     },
     config = function(_, opts)
       -- install parsers from custom opts.ensure_installed
@@ -79,7 +80,9 @@ return {
           -- let's check again
           parser_installed = pcall(vim.treesitter.get_parser, bufnr, parser_name)
 
-          if parser_installed then
+          local should_start = not vim.tbl_contains(opts.ignore_install or {}, parser_name)
+
+          if parser_installed and should_start then
             -- Start treesitter for this buffer
             vim.treesitter.start(bufnr, parser_name)
           end
@@ -91,13 +94,15 @@ return {
     "nvim-treesitter/nvim-treesitter-textobjects",
     branch = "main",
     keys = {
-      selection_object("af", "@function.outer", "textobjects", "Select outer function"),
-      selection_object("if", "@function.inner", "textobjects", "Select inner function"),
-      selection_object("ac", "@class.outer", "textobjects", "Select outer class"),
-      selection_object("ic", "@class.inner", "textobjects", "Select inner class"),
-      selection_object("ao", "@parameter.outer", "textobjects", "Select outer parameter"),
-      selection_object("io", "@parameter.inner", "textobjects", "Select inner parameter"),
-      selection_object("as", "@local.scope", "locals", "Select local scope"),
+      ---@format disable
+      selection_object("af", "@function.outer",    "textobjects",       "Select outer function"),
+      selection_object("if", "@function.inner",    "textobjects",       "Select inner function"),
+      selection_object("ac", "@class.outer",       "textobjects",       "Select outer class"),
+      selection_object("ic", "@class.inner",       "textobjects",       "Select inner class"),
+      selection_object("ao", "@parameter.outer",   "textobjects",       "Select outer parameter"),
+      selection_object("io", "@parameter.inner",   "textobjects",       "Select inner parameter"),
+      selection_object("as", "@local.scope",       "locals",            "Select local scope"),
+      ---@format enable
     },
     ---@module "nvim-treesitter-textobjects"
     opts = { multiwindow = true },
