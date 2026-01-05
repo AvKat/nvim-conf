@@ -7,7 +7,7 @@ local lsp_attach = function(args)
   map("n", "<leader>gr",   require('telescope.builtin').lsp_references,                         opts)
   map("n", "<leader>fs",   require("telescope.builtin").lsp_dynamic_workspace_symbols,          opts)
   map("n", "K",            vim.lsp.buf.hover,                                                   opts)
-  map("n", "<leader>vd",   vim.diagnostic.open_float,                                           opts)
+  map("n", "<leader>d",   vim.diagnostic.open_float,                                           opts)
   map("n", "<leader>vca",  vim.lsp.buf.code_action,                                             opts)
   map("n", "<leader>rn",   vim.lsp.buf.rename,                                                  opts)
   map("n", "<leaderl>gi",  vim.lsp.buf.implementation,                                          opts)
@@ -56,14 +56,10 @@ return {
 
     vim.lsp.config["tinymist"] = {
       capabilities = capabilities,
-      root_dir = "/",
-      -- root_dir = function(_, bufnr)
-      --   return "/Users/avishkathpal"
-      -- end,
+      root_dir = "/Users/avishkathpal/",
       settings = {
         exportPdf = "onSave",
         formatterMode = "typstfmt",
-        rootPath = "/Users/avishkathpal/Local Docs/",
       }
     }
 
