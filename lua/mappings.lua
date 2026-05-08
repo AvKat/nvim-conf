@@ -9,6 +9,7 @@ vim.keymap.set("n", "<leader>qq", ":qa<CR>")
 vim.keymap.set("n", "<leader>bd", ":bd<CR>")
 vim.keymap.set("n", "<leader>BD", ":%bd|e#|bd#<CR>", { silent = true })
 vim.keymap.set("n", "<leader>vs", ":vsplit<CR>")
+vim.keymap.set("n", "zz", "zt")
 
 vim.keymap.set("n", "<leader>o", "m`o<Esc>``")
 vim.keymap.set("n", "<leader>O", "m`O<Esc>``")

@@ -47,7 +47,8 @@ return {
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
     local capabilities = cmp_nvim_lsp.default_capabilities()
 
-    local default_conf_servers = { 'pyright', 'clangd', 'ts_ls', 'rust_analyzer', 'coq_lsp' }
+    local default_conf_servers = { 'pylsp', 'clangd', 'ts_ls', 'rust_analyzer', 'coq_lsp', 'racket_langserver',
+      'millet', 'hls' }
     for _, lsp in ipairs(default_conf_servers) do
       vim.lsp.config[lsp] = {
         capabilities = capabilities,
@@ -59,10 +60,9 @@ return {
       root_dir = "/Users/avishkathpal/",
       settings = {
         exportPdf = "onSave",
-        formatterMode = "typstfmt",
+        formatterMode = "typstyle",
       }
     }
-
 
     vim.lsp.config["lua_ls"] = {
       capabilities = capabilities,

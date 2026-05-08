@@ -1,10 +1,11 @@
 -- local utils = require "utils"
+vim.g.filetype_pl = "prolog"
 
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.clipboard = "unnamed"
 vim.opt.mouse = 'nvc'
-vim.opt.list = true
+vim.opt.list = false
 
 vim.diagnostic.config({
   virtual_text = true
@@ -41,7 +42,7 @@ vim.g.sonokai_diagnostic_text_highlight = 1
 vim.g.sonokai_diagnostic_virtual_text = 'colored'
 vim.g.sonokai_spell_foreground = 'colored'
 
-vim.cmd.colorscheme("sonokai")
+-- vim.cmd.colorscheme("onedark")
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
 
